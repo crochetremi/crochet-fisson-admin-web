@@ -1,5 +1,5 @@
 # Tutoriel
 
-```
-Instructions de montage de l'infrastructure
-```
+**Instructions de montage de l'infrastructure.**
+
+---
