@@ -1,14 +1,77 @@
 - name: debian-admin-web-prj
   hosts: localhost
   connection: local
+  become: yes
 
   tasks:
+    # Mettre à jour le cache APT pour partir d'une base propre
     - name: Mettre à jour le cache APT
       apt:
         update_cache: yes
 
-    - name: Installer les paquets
+    # Installer Nginx
+    - name: Installer Nginx
       apt:
         name:
           - nginx
         state: present
+    
+    # Préconfiguration des réponses interactives de slapd
+    - name: Configurer le domaine LDAP par défaut
+      debconf:
+        name: slapd
+        question: slapd/domain
+        value: "iutnc-crochet-fisson.local"
+        vtype: string
+
+    - name: Configurer le mot de passe administrateur LDAP
+      debconf:
+        name: slapd
+        question: slapd/root_password
+        value: "a"
+        vtype: password
+
+    - name: Confirmer le mot de passe administrateur LDAP
+      debconf:
+        name: slapd
+        question: slapd/root_password_again
+        value: "a"
+        vtype: password
+
+    - name: Ignorer la purge de la base de données
+      debconf:
+        name: slapd
+        question: slapd/purge_database
+        value: "false"
+        vtype: boolean
+
+    # Installer et configurer LDAP avec nos préconfigurations
+    - name: Installer LDAP
+      apt:
+        name:
+          - slapd
+          - ldap-utils
+        state: present
+      
+    #- name: Redémarrer le service slapd pour appliquer les configurations
+    #  service:
+    #    name: slapd
+    #    state: restarted
+
+    # Copier le fichier LDIF vers le serveur cible
+    #- name: Transférer le fichier LDIF des utilisateurs
+    #  copy:
+    #    src: nextcloud-users.txt  # Chemin local vers le fichier téléchargé
+    #    dest: /tmp/nextcloud-users.ldif
+    #    owner: root
+    #    mode: '0644'
+
+    # Charger le fichier dans la base LDAP
+    #- name: Injecter la structure et l'utilisateur test
+    #  command: ldapadd -x -D "cn=admin,dc=iutnc-crochet-fisson,dc=local" -w "a" -f /tmp/nextcloud-users.ldif
+    #  register: ldap_import
+    #  # On ignore l'erreur si les entrées existent déjà (code 68 dans LDAP)
+    #  failed_when: 
+    #    - ldap_import.rc != 0
+    #    - ldap_import.rc != 68
+    #  changed_when: ldap_import.rc == 0

@@ -15,7 +15,7 @@ RUN apt-get update && apt-get install -y \
 
 #Copier le Playbook dans le conteneur
 WORKDIR /ansible
-COPY ./ansible/playbook.yml .
+COPY ./ansible/ .
 
 #Exécuter Ansible à l'intérieur du conteneur pour dérouler la configuration - Le containeur est son propre chef d'orchestre.
 RUN ansible-playbook playbook.yml
