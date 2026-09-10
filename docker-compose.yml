@@ -1,0 +1,43 @@
+services:
+  # On déclare notre service principal qui agira comme une véritable machine virtuelle Debian
+  debian-admin-web-prj:
+    # 1. Construction de l'image
+    build: .
+    container_name: debian-admin-web-prj
+    
+    # 2. Exposition des ports
+    # 80/443 pour Nginx (HTTP/HTTPS) et 389 pour l'annuaire OpenLDAP - On peut ajouter d'autres ports si nécessaire (ex: 3306 pour MariaDB, 22 pour SSH, etc.)
+    ports:
+      - "80:80"
+      - "443:443"
+      - "389:389"
+
+    # =========================================================================
+    # CONFIGURATIONS OBLIGATOIRES POUR SYSTEMD (Mode "Machine Virtuelle")
+    # =========================================================================
+
+    # 3. Élévation des privilèges
+    # systemd a besoin d'interagir profondément avec le système pour gérer les services.
+    # Cette option lève les sécurités restrictives par défaut de Docker.
+    privileged: true
+    
+    # 4. Gestion des groupes de contrôle (cgroups v2 - spécifique Fedora/Linux récents)
+    # systemd organise ses services (Nginx, MariaDB) dans des "cgroups" pour gérer leurs ressources.
+    # On doit lui donner l'accès en lecture/écriture à l'arborescence cgroup de la machine hôte.
+    cgroup: host
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:rw
+      
+    # 5. Fichiers temporaires en mémoire vive
+    # systemd exige stricement que les dossiers contenant les sockets de communication et les PID 
+    # soient montés en RAM (tmpfs) et non sur le disque dur. Sinon, il refuse de démarrer.
+    tmpfs:
+      - /run
+      - /run/lock
+      - /tmp
+
+    # 6. Extinction propre du système
+    # Par défaut Docker envoie un signal SIGTERM que systemd ignore. Cela forcerait Docker 
+    # à "tuer" brutalement le conteneur, au risque de corrompre MariaDB ou LDAP. 
+    # SIGRTMIN+3 est le signal officiel compris par systemd pour s'éteindre proprement.
+    stop_signal: SIGRTMIN+3

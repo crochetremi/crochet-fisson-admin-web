@@ -1,0 +1,14 @@
+- name: debian-admin-web-prj
+  hosts: localhost
+  connection: local
+
+  tasks:
+    - name: Mettre à jour le cache APT
+      apt:
+        update_cache: yes
+
+    - name: Installer les paquets
+      apt:
+        name:
+          - nginx
+        state: present
