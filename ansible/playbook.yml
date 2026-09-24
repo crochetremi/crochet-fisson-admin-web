@@ -5,18 +5,16 @@
 
   tasks:
     # Mettre à jour le cache APT pour partir d'une base propre
-    - name: Mettre à jour le cache APT
-      apt:
-        update_cache: yes
+    #- name: Mettre à jour le cache APT
+    #  apt:
+    #    update_cache: yes
 
-    # Installer Nginx
     - name: Installer Nginx
       apt:
-        name:
-          - nginx
+        name: nginx
         state: present
+        update_cache: yes
     
-    # Préconfiguration des réponses interactives de slapd
     - name: Configurer le domaine LDAP par défaut
       debconf:
         name: slapd
@@ -45,7 +43,6 @@
         value: "false"
         vtype: boolean
 
-    # Installer et configurer LDAP avec nos préconfigurations
     - name: Installer LDAP
       apt:
         name:
@@ -53,16 +50,42 @@
           - ldap-utils
         state: present
       
-    # Démarrer le service slapd manuellement (contournement pour le build Docker)
-    - name: Démarrer le service slapd manuellement
-      command: /etc/init.d/slapd start
-      # On ignore les erreurs au cas où l'installation APT aurait déjà réussi à lancer le processus
-      ignore_errors: yes
+    - name: Créer le dossier d'exécution pour slapd
+      file:
+        path: /run/slapd
+        state: directory
+        owner: openldap
+        group: openldap
+        mode: '0755'
 
-    # Copier le fichier LDIF vers le serveur cible
+    - name: Démarrer slapd temporairement en arrière-plan
+      command: /usr/sbin/slapd -h "ldapi:///" -u openldap -g openldap
+
+    - name: Laisser le temps au service de s'initialiser
+      pause:
+        seconds: 2
+
+    - name: Forcer le mot de passe administrateur
+      shell: |
+        cat <<EOF > /tmp/update_pass.ldif
+        dn: olcDatabase={1}mdb,cn=config
+        changetype: modify
+        replace: olcRootPW
+        olcRootPW: $(slappasswd -s "a")
+        EOF
+        ldapmodify -Y EXTERNAL -H ldapi:/// -f /tmp/update_pass.ldif
+      args:
+        executable: /bin/bash
+
     - name: Transférer le fichier LDIF des utilisateurs
       copy:
         src: nextcloud-users.ldif
-        dest: /tmp/nextcloud-users.ldif
+        dest: /ansible/nextcloud-users.ldif
         owner: root
         mode: '0644'
+    
+    - name: Importer les utilisateurs Nextcloud dans l'annuaire
+      command: ldapadd -H ldapi:/// -x -D "cn=admin,dc=iutnc-crochet-fisson,dc=local" -w "a" -f /ansible/nextcloud-users.ldif
+
+    - name: Éteindre le slapd temporaire proprement
+      shell: kill $(cat /run/slapd/slapd.pid)
