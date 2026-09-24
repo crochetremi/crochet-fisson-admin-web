@@ -1,10 +1,10 @@
 # On part d'une image Debian qui fera office de "VM"
 FROM debian:latest
 
-#On désactive les interractions pour les paquets
+# On désactive les intéractions pour les paquets
 ENV DEBIAN_FRONTEND=noninteractive
 
-#Installer Systemd et Ansible et les dépendances nécessaires
+# Installer Systemd et Ansible et les dépendances nécessaires
 RUN apt-get update && apt-get install -y \
     systemd \
     systemd-sysv \
@@ -13,12 +13,17 @@ RUN apt-get update && apt-get install -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-#Copier le Playbook dans le conteneur
+# Copier le Playbook dans le conteneur
 WORKDIR /ansible
 COPY ./ansible/ .
 
-#Exécuter Ansible à l'intérieur du conteneur pour dérouler la configuration - Le containeur est son propre chef d'orchestre.
+# Exécuter Ansible à l'intérieur du conteneur pour dérouler la configuration
 RUN ansible-playbook playbook.yml
 
-#Au démarrage, on lance le processus init de Debian - Sinon le conteneur se termine immédiatement après le lancement
+# =========================================================================
+# SÉCURITÉ : Empêcher le conteneur de capturer les terminaux de l'hôte
+# =========================================================================
+RUN systemctl mask systemd-logind.service getty.target console-getty.service
+
+# Au démarrage, on lance le processus init de Debian
 CMD ["/lib/systemd/systemd"]
