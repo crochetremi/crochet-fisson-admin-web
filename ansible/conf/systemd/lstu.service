@@ -1,0 +1,13 @@
+[Unit]
+Description=Lstu URL shortener
+After=network.target
+
+[Service]
+User=lstu
+Group=lstu
+WorkingDirectory=/opt/lstu
+ExecStart=/usr/bin/carton exec hypnotoad -f script/lstu
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

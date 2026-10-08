@@ -1,0 +1,16 @@
+[Unit]
+Description=Provisioning initial (Nextcloud <-> Keycloak)
+After=keycloak.service mariadb.service nginx.service php8.2-fpm.service
+ConditionPathExists=!/var/lib/provisioned
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+TimeoutStartSec=900
+Environment=LC_ALL=C.UTF-8
+WorkingDirectory=/ansible
+ExecStart=/usr/bin/ansible-playbook /ansible/provision.yml
+ExecStartPost=/usr/bin/touch /var/lib/provisioned
+
+[Install]
+WantedBy=multi-user.target

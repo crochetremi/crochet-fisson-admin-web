@@ -1,0 +1,11 @@
+{
+    hypnotoad => {
+        listen => ['http://127.0.0.1:8080'],
+        proxy  => 1,
+    },
+    contact       => 'admin@{{ ldap_domain }}',
+    secrets       => ['{{ lstu_secret }}'],
+    dbtype        => 'sqlite',
+    db_path       => 'lstu.db',
+    skip_spamhaus => 1,
+}

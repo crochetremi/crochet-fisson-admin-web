@@ -1,0 +1,79 @@
+- name: Lstu
+  hosts: localhost
+  connection: local
+  tasks:
+    - name: Dépendances Debian
+      apt:
+        name:
+          - git
+          - build-essential
+          - libssl-dev
+          - zlib1g-dev
+          - libio-socket-ssl-perl
+          - liblwp-protocol-https-perl
+          - cpanminus
+          - carton
+          - libmariadb-dev
+          - libpq-dev
+          - libpng-dev
+          - libqrencode-dev
+          - pkg-config
+        state: present
+        update_cache: yes
+        
+    - name: Utilisateur lstu
+      user:
+        name: lstu
+        system: yes
+        shell: /usr/sbin/nologin
+        home: /opt/lstu
+        create_home: no
+
+    - name: Récupérer Lstu (dépôt officiel)
+      git:
+        repo: https://framagit.org/fiat-tux/hat-softwares/lstu.git
+        dest: /opt/lstu
+        version: "{{ lstu_version }}"
+
+    - name: Droits sur /opt/lstu
+      file:
+        path: /opt/lstu
+        state: directory
+        recurse: yes
+        owner: lstu
+        group: lstu
+
+    - name: Dépendances Perl (carton) - long
+      command: runuser -u lstu -- carton install --without=test
+      args:
+        chdir: /opt/lstu
+        creates: /opt/lstu/local
+
+    - name: Configuration Lstu
+      template:
+        src: lstu.conf.j2
+        dest: /opt/lstu/lstu.conf
+        owner: lstu
+        group: lstu
+        mode: '0640'
+
+    - name: Unité systemd
+      copy:
+        src: "{{ playbook_dir }}/conf/systemd/lstu.service"
+        dest: /etc/systemd/system/lstu.service
+        mode: '0644'
+
+    - name: Activer Lstu
+      command: systemctl enable lstu.service
+
+    - name: Vhost nginx (sans authentification pour l'instant)
+      copy:
+        src: "{{ playbook_dir }}/conf/nginx/lstu-noauth.conf"
+        dest: /etc/nginx/sites-available/lstu.conf
+        mode: '0644'
+
+    - name: Activer le vhost
+      file:
+        src: /etc/nginx/sites-available/lstu.conf
+        dest: /etc/nginx/sites-enabled/lstu.conf
+        state: link

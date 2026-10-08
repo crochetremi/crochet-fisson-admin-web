@@ -1,0 +1,65 @@
+- name: OAuth2 Proxy
+  hosts: localhost
+  connection: local
+  vars:
+    o2p_arch: "{{ 'arm64' if ansible_architecture in ['aarch64', 'arm64'] else 'amd64' }}"
+  tasks:
+    - name: Télécharger la release officielle
+      get_url:
+        url: "https://github.com/oauth2-proxy/oauth2-proxy/releases/download/{{ oauth2_proxy_version }}/oauth2-proxy-{{ oauth2_proxy_version }}.linux-{{ o2p_arch }}.tar.gz"
+        dest: /tmp/oauth2-proxy.tar.gz
+
+    - name: Dossier temporaire d'extraction
+      file:
+        path: /tmp/o2p
+        state: directory
+
+    - name: Extraire
+      unarchive:
+        src: /tmp/oauth2-proxy.tar.gz
+        dest: /tmp/o2p
+        remote_src: yes
+        extra_opts: [--strip-components=1]
+
+    - name: Installer le binaire
+      copy:
+        src: /tmp/o2p/oauth2-proxy
+        dest: /usr/local/bin/oauth2-proxy
+        remote_src: yes
+        mode: '0755'
+
+    - name: Nettoyer
+      file:
+        path: "{{ item }}"
+        state: absent
+      loop: [/tmp/o2p, /tmp/oauth2-proxy.tar.gz]
+
+    - name: Utilisateur système
+      user:
+        name: oauth2-proxy
+        system: yes
+        shell: /usr/sbin/nologin
+        create_home: no
+
+    - name: Configuration
+      template:
+        src: oauth2-proxy.cfg.j2
+        dest: /etc/oauth2-proxy.cfg
+        owner: root
+        group: oauth2-proxy
+        mode: '0640'
+
+    - name: Unité systemd
+      copy:
+        src: "{{ playbook_dir }}/conf/systemd/oauth2-proxy.service"
+        dest: /etc/systemd/system/oauth2-proxy.service
+        mode: '0644'
+
+    - name: Activer OAuth2 Proxy
+      command: systemctl enable oauth2-proxy.service
+
+    - name: Vhost Lstu protégé (remplace la version sans auth)
+      copy:
+        src: "{{ playbook_dir }}/conf/nginx/lstu.conf"
+        dest: /etc/nginx/sites-available/lstu.conf
+        mode: '0644'

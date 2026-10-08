@@ -2,18 +2,20 @@ services:
   debian-admin-web-prj:
     build: .
     container_name: debian-admin-web-prj
+    hostname: debian-admin-web-prj
     ports:
       - "80:80"
       - "443:443"
-      - "389:389"
-    
-    # Autorise Docker à créer un environnement système complet et isolé
     privileged: true
-    
-    # Seuls les dossiers temporaires classiques doivent être en RAM
     tmpfs:
       - /run
       - /run/lock
       - /tmp
-    
     stop_signal: SIGRTMIN+3
+    # Le conteneur doit résoudre les domaines vers lui-même
+    # (Nextcloud et OAuth2 Proxy contactent https://keycloak.local)
+    extra_hosts:
+      - "nextcloud.local:127.0.0.1"
+      - "keycloak.local:127.0.0.1"
+      - "lstu.local:127.0.0.1"
+# volumes: { mysql: {}, ldap: {}, nc-data: {} }

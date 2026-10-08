@@ -1,0 +1,18 @@
+provider = "keycloak-oidc"
+oidc_issuer_url = "https://keycloak.local/realms/{{ keycloak_realm }}"
+client_id = "lstu"
+client_secret = "{{ lstu_client_secret }}"
+redirect_url = "https://lstu.local/oauth2/callback"
+scope = "openid email profile"
+code_challenge_method = "S256"
+
+http_address = "127.0.0.1:4180"
+reverse_proxy = true
+upstreams = ["static://202"]
+email_domains = ["*"]
+skip_provider_button = true
+set_xauthrequest = true
+
+cookie_secret = "{{ oauth2_proxy_cookie_secret }}"
+cookie_secure = true
+whitelist_domains = [".lstu.local", "lstu.local"]

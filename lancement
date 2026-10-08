@@ -1,0 +1,12 @@
+# 1. Certificats (une seule fois) + confiance sur ta machine (Arch)
+bash ansible/certs/gen-certs.sh
+sudo trust anchor ansible/certs/ca.crt        # Firefox : importer ca.crt dans ses certificats
+
+# 2. Noms de domaine
+echo "127.0.0.1 nextcloud.local keycloak.local lstu.local" | sudo tee -a /etc/hosts
+
+# 3. Build (long la 1re fois, ensuite chaque service est en cache)
+docker compose up -d --build
+
+# 4. Suivre le provisioning du 1er démarrage
+docker exec -it debian-admin-web-prj journalctl -f -u keycloak -u provision -u oauth2-proxy

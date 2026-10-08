@@ -1,0 +1,100 @@
+- name: Nextcloud
+  hosts: localhost
+  connection: local
+  vars:
+    occ: "runuser -u www-data -- php -d memory_limit=512M /var/www/nextcloud/occ"
+  tasks:
+    - name: Paquets PHP
+      apt:
+        name:
+          - php8.3-fpm
+          - php8.3-cli
+          - php8.3-mysql
+          - php8.3-gd
+          - php8.3-curl
+          - php8.3-mbstring
+          - php8.3-intl
+          - php8.3-gmp
+          - php8.3-bcmath
+          - php8.3-xml
+          - php8.3-zip
+          - php8.3-bz2
+          - php8.3-apcu
+        state: present
+
+    - name: Réglages PHP (fpm + cli)
+      copy:
+        src: "{{ playbook_dir }}/conf/php/99-nextcloud.ini"
+        dest: "/etc/php/{{ php_version }}/{{ item }}/conf.d/99-nextcloud.ini"
+        mode: '0644'
+      loop: [fpm, cli]
+
+    - name: Garder l'environnement dans php-fpm
+      lineinfile:
+        path: "/etc/php/{{ php_version }}/fpm/pool.d/www.conf"
+        regexp: '^;?clear_env'
+        line: 'clear_env = no'
+
+    - name: Télécharger l'archive officielle (vérifiée par sha256)
+      get_url:
+        url: https://download.nextcloud.com/server/releases/latest.tar.bz2
+        dest: /tmp/latest.tar.bz2
+        checksum: "sha256:https://download.nextcloud.com/server/releases/latest.tar.bz2.sha256"
+
+    - name: Extraire Nextcloud
+      unarchive:
+        src: /tmp/latest.tar.bz2
+        dest: /var/www
+        remote_src: yes
+        owner: www-data
+        group: www-data
+        creates: /var/www/nextcloud/occ
+
+    - name: Supprimer l'archive
+      file:
+        path: /tmp/latest.tar.bz2
+        state: absent
+
+    - include_tasks: tasks/mariadb-start.yml
+
+    - name: Installer Nextcloud (occ maintenance:install)
+      command: >
+        {{ occ }} maintenance:install
+        --database=mysql --database-name=nextcloud --database-user=nextcloud
+        --database-pass={{ nextcloud_db_password }}
+        --admin-user={{ nextcloud_admin_user }} --admin-pass={{ nextcloud_admin_password }}
+      args:
+        creates: /var/www/nextcloud/config/config.php
+
+    - name: Configuration système
+      command: "{{ occ }} config:system:set {{ item }}"
+      loop:
+        - trusted_domains 1 --value=nextcloud.local
+        - overwrite.cli.url --value=https://nextcloud.local
+        - overwriteprotocol --value=https
+        - allow_local_remote_servers --value=true --type=boolean
+        - memcache.local --value='\OC\Memcache\APCu'
+        - default_phone_region --value=FR
+
+    # Nextcloud utilise son propre magasin de CA, pas celui du système
+    - name: Faire confiance à notre CA
+      command: "{{ occ }} security:certificates:import /usr/local/share/ca-certificates/ca.crt"
+
+    - name: Installer l'app user_oidc
+      command: "{{ occ }} app:install user_oidc"
+      args:
+        creates: /var/www/nextcloud/apps/user_oidc
+
+    - include_tasks: tasks/mariadb-stop.yml
+
+    - name: Vhost nginx
+      copy:
+        src: "{{ playbook_dir }}/conf/nginx/nextcloud.conf"
+        dest: /etc/nginx/sites-available/nextcloud.conf
+        mode: '0644'
+
+    - name: Activer le vhost
+      file:
+        src: /etc/nginx/sites-available/nextcloud.conf
+        dest: /etc/nginx/sites-enabled/nextcloud.conf
+        state: link

@@ -1,0 +1,32 @@
+- name: Provisioning au premier démarrage
+  hosts: localhost
+  connection: local
+  tasks:
+    - name: Attendre que le realm Keycloak soit importé
+      uri:
+        url: "http://127.0.0.1:8180/realms/{{ keycloak_realm }}/.well-known/openid-configuration"
+        status_code: 200
+      register: kc
+      until: kc.status == 200
+      retries: 60
+      delay: 5
+
+    - name: Déclarer Keycloak comme provider OIDC dans Nextcloud
+      command:
+        argv:
+          - runuser
+          - -u
+          - www-data
+          - --
+          - php
+          - /var/www/nextcloud/occ
+          - user_oidc:provider
+          - keycloak
+          - "--clientid=nextcloud"
+          - "--clientsecret={{ nextcloud_client_secret }}"
+          - "--discoveryuri=https://keycloak.local/realms/{{ keycloak_realm }}/.well-known/openid-configuration"
+          - "--scope=openid email profile"
+          - "--mapping-uid=preferred_username"
+          - "--mapping-display-name=name"
+          - "--mapping-email=email"
+          - "--unique-uid=0"

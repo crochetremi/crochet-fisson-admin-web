@@ -1,0 +1,62 @@
+- name: OpenLDAP
+  hosts: localhost
+  connection: local
+  tasks:
+    - name: Pré-remplir les réponses debconf de slapd
+      debconf:
+        name: slapd
+        question: "{{ item.question }}"
+        value: "{{ item.value }}"
+        vtype: "{{ item.vtype }}"
+      loop:
+        - { question: slapd/domain, value: "{{ ldap_domain }}", vtype: string }
+        - { question: shared/organization, value: "{{ ldap_domain }}", vtype: string }
+        - { question: slapd/password1, value: "{{ ldap_admin_password }}", vtype: password }
+        - { question: slapd/password2, value: "{{ ldap_admin_password }}", vtype: password }
+        - { question: slapd/purge_database, value: "false", vtype: boolean }
+        - { question: slapd/move_old_database, value: "true", vtype: boolean }
+        - { question: slapd/no_configuration, value: "false", vtype: boolean }
+      no_log: true
+
+    - name: Installer slapd
+      apt:
+        name: [slapd, ldap-utils]
+        state: present
+        update_cache: yes
+
+    - name: Hacher les mots de passe des utilisateurs
+      command: slappasswd -s "{{ item.password }}"
+      loop: "{{ ldap_users }}"
+      register: hashed
+      changed_when: false
+      no_log: true
+
+    - name: Générer le LDIF
+      template:
+        src: users.ldif.j2
+        dest: /tmp/users.ldif
+        mode: '0600'
+
+    # Import hors-ligne : pas besoin de démarrer slapd
+    - name: Importer l'annuaire
+      command: slapadd -n 1 -l /tmp/users.ldif
+      args:
+        creates: /var/lib/ldap/.users-imported
+
+    - name: Marqueur d'import
+      file:
+        path: /var/lib/ldap/.users-imported
+        state: touch
+
+    - name: Rendre la base à openldap
+      file:
+        path: /var/lib/ldap
+        state: directory
+        recurse: yes
+        owner: openldap
+        group: openldap
+
+    - name: Nettoyer
+      file:
+        path: /tmp/users.ldif
+        state: absent

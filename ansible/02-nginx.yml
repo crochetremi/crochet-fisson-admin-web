@@ -1,0 +1,39 @@
+- name: Nginx et certificats
+  hosts: localhost
+  connection: local
+  tasks:
+    - name: Installer nginx
+      apt:
+        name: nginx
+        state: present
+        update_cache: yes
+        cache_valid_time: 3600
+
+    - name: Dossier SSL
+      file:
+        path: /etc/nginx/ssl
+        state: directory
+        mode: '0755'
+
+    - name: Certificat et clé du serveur
+      copy:
+        src: "{{ playbook_dir }}/certs/{{ item.f }}"
+        dest: "/etc/nginx/ssl/{{ item.f }}"
+        mode: "{{ item.m }}"
+      loop:
+        - { f: server.crt, m: '0644' }
+        - { f: server.key, m: '0600' }
+
+    - name: Installer la CA dans le conteneur
+      copy:
+        src: "{{ playbook_dir }}/certs/ca.crt"
+        dest: /usr/local/share/ca-certificates/ca.crt
+        mode: '0644'
+
+    - name: Mettre à jour le magasin de certificats
+      command: update-ca-certificates
+
+    - name: Retirer le site par défaut
+      file:
+        path: /etc/nginx/sites-enabled/default
+        state: absent

@@ -1,0 +1,12 @@
+- name: Unité de provisioning
+  hosts: localhost
+  connection: local
+  tasks:
+    - name: Installer l'unité
+      copy:
+        src: "{{ playbook_dir }}/conf/systemd/provision.service"
+        dest: /etc/systemd/system/provision.service
+        mode: '0644'
+
+    - name: Activer le provisioning
+      command: systemctl enable provision.service

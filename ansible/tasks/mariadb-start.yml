@@ -1,0 +1,30 @@
+- name: Socket MariaDB déjà présent ?
+  stat:
+    path: /run/mysqld/mysqld.sock
+  register: mariadb_sock
+
+- name: Préparer /run/mysqld
+  file:
+    path: /run/mysqld
+    state: directory
+    owner: mysql
+    group: mysql
+    mode: '0755'
+
+- name: Démarrer MariaDB temporairement
+  shell: setsid nohup mariadbd --user=mysql --skip-networking > /tmp/mariadb-build.log 2>&1 < /dev/null &
+  args:
+    executable: /bin/bash
+  when: not mariadb_sock.stat.exists
+
+- name: Mémoriser que MariaDB est temporaire
+  set_fact:
+    mariadb_temp: "{{ not mariadb_sock.stat.exists }}"
+
+- name: Attendre que MariaDB réponde
+  command: mariadb-admin ping
+  register: mariadb_ping
+  until: mariadb_ping.rc == 0
+  retries: 30
+  delay: 1
+  changed_when: false

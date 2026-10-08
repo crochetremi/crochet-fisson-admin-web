@@ -1,0 +1,28 @@
+- name: MariaDB
+  hosts: localhost
+  connection: local
+  tasks:
+    - name: Installer MariaDB
+      apt:
+        name: mariadb-server
+        state: present
+        update_cache: yes
+        cache_valid_time: 3600
+
+    - include_tasks: tasks/mariadb-start.yml
+
+    - name: Créer les bases et utilisateurs
+      shell: |
+        mariadb <<'SQL'
+        CREATE DATABASE IF NOT EXISTS nextcloud CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+        CREATE USER IF NOT EXISTS 'nextcloud'@'localhost' IDENTIFIED BY '{{ nextcloud_db_password }}';
+        GRANT ALL PRIVILEGES ON nextcloud.* TO 'nextcloud'@'localhost';
+        CREATE DATABASE IF NOT EXISTS keycloak CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+        CREATE USER IF NOT EXISTS 'keycloak'@'localhost' IDENTIFIED BY '{{ keycloak_db_password }}';
+        GRANT ALL PRIVILEGES ON keycloak.* TO 'keycloak'@'localhost';
+        FLUSH PRIVILEGES;
+        SQL
+      args:
+        executable: /bin/bash
+
+    - include_tasks: tasks/mariadb-stop.yml

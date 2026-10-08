@@ -1,0 +1,92 @@
+- name: Keycloak
+  hosts: localhost
+  connection: local
+  tasks:
+    - name: Java
+      apt:
+        name: openjdk-17-jre-headless
+        state: present
+        update_cache: yes
+        cache_valid_time: 3600
+
+    - name: Utilisateur système keycloak
+      user:
+        name: keycloak
+        system: yes
+        shell: /usr/sbin/nologin
+        home: /opt/keycloak
+        create_home: no
+
+    - name: Dossier d'installation
+      file:
+        path: /opt/keycloak
+        state: directory
+        owner: keycloak
+        group: keycloak
+
+    - name: Télécharger l'archive officielle
+      get_url:
+        url: "https://github.com/keycloak/keycloak/releases/download/{{ keycloak_version }}/keycloak-{{ keycloak_version }}.tar.gz"
+        dest: /tmp/keycloak.tar.gz
+
+    - name: Extraire Keycloak
+      unarchive:
+        src: /tmp/keycloak.tar.gz
+        dest: /opt/keycloak
+        remote_src: yes
+        extra_opts: [--strip-components=1]
+        owner: keycloak
+        group: keycloak
+        creates: /opt/keycloak/bin/kc.sh
+
+    - name: Supprimer l'archive
+      file:
+        path: /tmp/keycloak.tar.gz
+        state: absent
+
+    - name: Configuration Keycloak
+      template:
+        src: keycloak.conf.j2
+        dest: /opt/keycloak/conf/keycloak.conf
+        owner: keycloak
+        group: keycloak
+        mode: '0640'
+
+    - name: Dossier d'import du realm
+      file:
+        path: /opt/keycloak/data/import
+        state: directory
+        owner: keycloak
+        group: keycloak
+
+    - name: Realm (clients + fédération LDAP)
+      template:
+        src: realm.json.j2
+        dest: "/opt/keycloak/data/import/{{ keycloak_realm }}-realm.json"
+        owner: keycloak
+        group: keycloak
+        mode: '0600'
+
+    - name: Build optimisé de Keycloak
+      command: runuser -u keycloak -- /opt/keycloak/bin/kc.sh build
+
+    - name: Unité systemd
+      template:
+        src: keycloak.service.j2
+        dest: /etc/systemd/system/keycloak.service
+        mode: '0644'
+
+    - name: Activer Keycloak
+      command: systemctl enable keycloak.service
+
+    - name: Vhost nginx
+      copy:
+        src: "{{ playbook_dir }}/conf/nginx/keycloak.conf"
+        dest: /etc/nginx/sites-available/keycloak.conf
+        mode: '0644'
+
+    - name: Activer le vhost
+      file:
+        src: /etc/nginx/sites-available/keycloak.conf
+        dest: /etc/nginx/sites-enabled/keycloak.conf
+        state: link

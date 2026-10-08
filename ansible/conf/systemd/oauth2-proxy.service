@@ -1,0 +1,13 @@
+[Unit]
+Description=OAuth2 Proxy
+After=network.target keycloak.service nginx.service
+
+[Service]
+User=oauth2-proxy
+ExecStart=/usr/local/bin/oauth2-proxy --config=/etc/oauth2-proxy.cfg
+# Au démarrage Keycloak peut ne pas être prêt : on réessaie jusqu'à ce que ça passe
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

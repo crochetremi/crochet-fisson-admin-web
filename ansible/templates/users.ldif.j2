@@ -1,0 +1,20 @@
+dn: ou=users,{{ ldap_base_dn }}
+objectClass: organizationalUnit
+ou: users
+
+dn: ou=groups,{{ ldap_base_dn }}
+objectClass: organizationalUnit
+ou: groups
+
+{% for u in ldap_users %}
+dn: uid={{ u.uid }},ou=users,{{ ldap_base_dn }}
+objectClass: inetOrgPerson
+uid: {{ u.uid }}
+cn: {{ u.givenName }} {{ u.sn }}
+sn: {{ u.sn }}
+givenName: {{ u.givenName }}
+displayName: {{ u.givenName }} {{ u.sn }}
+mail: {{ u.mail }}
+userPassword: {{ hashed.results[loop.index0].stdout }}
+
+{% endfor %}

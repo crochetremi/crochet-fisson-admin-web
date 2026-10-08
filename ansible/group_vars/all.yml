@@ -1,0 +1,29 @@
+php_version: "8.3"
+
+# --- LDAP ---
+ldap_domain: iutnc-crochet-fisson.local
+ldap_base_dn: dc=iutnc-crochet-fisson,dc=local
+ldap_admin_password: "ldap-admin-pw"
+ldap_users:
+  - { uid: jdoe,   givenName: John, sn: Doe,   mail: jdoe@iutnc-crochet-fisson.local,   password: password }
+  - { uid: asmith, givenName: Alice, sn: Smith, mail: asmith@iutnc-crochet-fisson.local, password: password }
+
+# --- Nextcloud ---
+nextcloud_db_password: "nc-db-pw"
+nextcloud_admin_user: admin
+nextcloud_admin_password: "nc-admin-pw"
+nextcloud_client_secret: "nextcloud-oidc-secret"
+
+# --- Keycloak ---
+keycloak_version: "26.4.0"          # à vérifier sur github.com/keycloak/keycloak/releases
+keycloak_realm: sae
+keycloak_db_password: "kc-db-pw"
+keycloak_admin_user: admin
+keycloak_admin_password: "kc-admin-pw"
+
+# --- Lstu / OAuth2 Proxy ---
+lstu_version: master                 # idéalement un tag précis
+lstu_secret: "change-me-lstu-secret"
+lstu_client_secret: "lstu-oidc-secret"
+oauth2_proxy_version: "v7.12.0"      # à vérifier sur github.com/oauth2-proxy/oauth2-proxy/releases
+oauth2_proxy_cookie_secret: "0123456789abcdef0123456789abcdef"   # exactement 16, 24 ou 32 caractères

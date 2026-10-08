@@ -1,0 +1,10 @@
+- name: Arrêter le MariaDB temporaire
+  command: mariadb-admin shutdown
+  when: mariadb_temp | default(false)
+
+- name: Attendre l'arrêt complet
+  wait_for:
+    path: /run/mysqld/mysqld.sock
+    state: absent
+    timeout: 60
+  when: mariadb_temp | default(false)

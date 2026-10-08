@@ -1,0 +1,16 @@
+[Unit]
+Description=Keycloak
+After=network.target mariadb.service slapd.service
+Requires=mariadb.service
+
+[Service]
+User=keycloak
+Group=keycloak
+Environment=KC_BOOTSTRAP_ADMIN_USERNAME={{ keycloak_admin_user }}
+Environment=KC_BOOTSTRAP_ADMIN_PASSWORD={{ keycloak_admin_password }}
+ExecStart=/opt/keycloak/bin/kc.sh start --optimized --import-realm
+Restart=on-failure
+TimeoutStartSec=300
+
+[Install]
+WantedBy=multi-user.target

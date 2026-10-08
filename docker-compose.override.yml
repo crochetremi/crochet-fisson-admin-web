@@ -1,0 +1,4 @@
+services:
+  debian-admin-web-prj:
+    volumes:
+      - ./ansible:/ansible
