@@ -133,6 +133,31 @@ for d in nextcloud.local keycloak.local lstu.local; do
     'ssl_verify_result=0'
 done
 
+t "Le certificat serveur est signé par notre CA" \
+  "\`server.crt: OK\`" \
+  'openssl verify -CAfile ansible/certs/ca.crt ansible/certs/server.crt' \
+  'server.crt: OK'
+
+t "Le certificat couvre les 3 domaines (SAN)" \
+  "nextcloud.local, keycloak.local et lstu.local dans le SAN" \
+  'openssl x509 -in ansible/certs/server.crt -noout -ext subjectAltName' \
+  'DNS:nextcloud.local.*DNS:keycloak.local.*DNS:lstu.local'
+
+t "Le certificat n'expire pas avant 7 jours (jour de la démo)" \
+  "\`Certificate will not expire\`" \
+  'openssl x509 -in ansible/certs/server.crt -noout -checkend 604800' \
+  'will not expire'
+
+t "Le conteneur fait confiance à la CA (sans --cacert)" \
+  "\`http=200\` sans erreur TLS" \
+  "$D curl -sS -o /dev/null -w 'http=%{http_code}\n' https://keycloak.local/realms/$REALM" \
+  'http=200'
+
+t "Nextcloud fait confiance à la CA" \
+  "\`ca.crt\` listé parmi les certificats importés" \
+  "$D runuser -u www-data -- php /var/www/nextcloud/occ security:certificates" \
+  'ca.crt'
+
 ############################################################
 section "4. Keycloak"
 
@@ -214,6 +239,21 @@ t "favicon.ico est servi localement par nginx" \
   "cu -o /dev/null -w 'http=%{http_code}\n' https://lstu.local/favicon.ico" \
   'http=204'
 
+t "Chemin inconnu protégé par défaut (refus par défaut)" \
+  "\`302\` : tout ce qui n'est pas une URL courte exige l'authentification" \
+  "cu -o /dev/null -w 'http=%{http_code}\n' https://lstu.local/un/chemin/inconnu" \
+  'http=302'
+
+t "Suppression d'un lien refusée sans authentification" \
+  "\`302\`, \`401\` ou \`403\`" \
+  "cu -o /dev/null -w 'http=%{http_code}\n' https://lstu.local/d/aaaaaaaa" \
+  'http=(302|401|403)'
+
+t "Ajout par GET refusé sans authentification" \
+  "\`302\`, \`401\` ou \`403\`" \
+  "cu -o /dev/null -w 'http=%{http_code}\n' 'https://lstu.local/a?lsturl=https://refuse.example&format=json'" \
+  'http=(302|401|403)'
+
 ############################################################
 section "7. Lstu : les URL raccourcies sont publiques"
 
@@ -265,8 +305,75 @@ t "La session Nextcloud appartient bien à l'utilisateur LDAP" \
   'cu -s -b "$JAR2" -H "OCS-APIRequest: true" "https://nextcloud.local/ocs/v2.php/cloud/user?format=json"' \
   "\"id\":\"$TEST_USER\""
 
-rm -f "$JAR1" "$JAR2" "$JAR3" /tmp/kc_body.html
+JAR4=$(mktemp); JAR5=$(mktemp); JAR6=$(mktemp)
 
+t "Un utilisateur absent de l'annuaire est refusé (Nextcloud)" \
+  "\`Invalid username or password\`" \
+  'kc_login "$JAR4" https://nextcloud.local/apps/user_oidc/login/1 "inconnu" "password"' \
+  'Invalid username or password'
+
+t "Un mauvais mot de passe est refusé (Nextcloud)" \
+  "\`Invalid username or password\`" \
+  'kc_login "$JAR6" https://nextcloud.local/apps/user_oidc/login/1 "$TEST_USER" "mauvais-mot-de-passe"' \
+  'Invalid username or password'
+
+t "Un second utilisateur LDAP (asmith) se connecte à Nextcloud" \
+  "arrivée sur Nextcloud avec \`status=200\`" \
+  'kc_login "$JAR5" https://nextcloud.local/apps/user_oidc/login/1 asmith "$TEST_PW"' \
+  'status=200 final_url=https://nextcloud.local/' 'status=5|introuvable|Invalid'
+
+t "La session Nextcloud d'asmith est bien celle d'asmith" \
+  "l'API OCS renvoie \`\"id\":\"asmith\"\`" \
+  'cu -s -b "$JAR5" -H "OCS-APIRequest: true" "https://nextcloud.local/ocs/v2.php/cloud/user?format=json"' \
+  '"id":"asmith"'
+
+rm -f "$JAR1" "$JAR2" "$JAR3" "$JAR4" "$JAR5" "$JAR6" /tmp/kc_body.html
+
+section "9. Installation conforme au sujet"
+
+t "OpenLDAP, nginx, MariaDB et PHP viennent de paquets Debian" \
+  "\`4\` paquets au statut installé" \
+  "$D dpkg -l slapd nginx mariadb-server php8.2-fpm | grep -c ^ii" \
+  '^4$'
+
+t "Nextcloud, Keycloak, Lstu et OAuth2 Proxy ne viennent PAS de paquets Debian" \
+  "\`0\` paquet : ils sont installés depuis les sources officielles" \
+  "$D dpkg -l nextcloud keycloak lstu oauth2-proxy 2>&1 | grep -c ^ii" \
+  '^0$'
+
+t "Nextcloud : archive officielle en place" \
+  "\`installed: true\`" \
+  "$D runuser -u www-data -- php /var/www/nextcloud/occ status" \
+  'installed: true'
+
+t "Keycloak : archive officielle dans /opt/keycloak" \
+  "un numéro de version" \
+  "$D runuser -u keycloak -- /opt/keycloak/bin/kc.sh --version" \
+  '[0-9]+\.[0-9]+\.[0-9]+'
+
+t "Lstu : dépôt officiel cloné depuis framagit" \
+  "l'URL du dépôt \`origin\`" \
+  "$D runuser -u lstu -- git -C /opt/lstu remote get-url origin" \
+  'framagit.org/fiat-tux/hat-softwares/lstu'
+
+t "OAuth2 Proxy : binaire de la release officielle" \
+  "une version \`v7.x\`" \
+  "$D /usr/local/bin/oauth2-proxy --version" \
+  'v[0-9]+\.[0-9]+'
+
+section "10. Livrables"
+
+check_docs() {
+  for f in README.md documents/tutoriel.md documents/workflow.md documents/retrospective.md; do
+    [ -s "$f" ] && echo "présent  $f" || echo "VIDE-OU-ABSENT  $f"
+  done
+}
+
+t "Les documents demandés existent et ne sont pas vides" \
+  "4 lignes « présent »" \
+  'check_docs' \
+  'présent' 'VIDE-OU-ABSENT'
+  
 ############################################################
 mkdir -p "$(dirname "$OUT")"
 {
