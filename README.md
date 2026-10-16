@@ -102,7 +102,7 @@ Compte de test : `jdoe` / `password`. Le détail complet, y compris la confiance
 - [Tutoriel](documents/tutoriel.md) : monter l'infrastructure pas à pas.
 - [Workflow](documents/workflow.md) : comment nous avons travaillé à deux.
 - [Rétrospective](documents/retrospective.md) : problèmes rencontrés et ce que nous ferions autrement.
-- [Rapport de tests](documents/tests.md) : généré par `bash tests/run-tests.sh`.
+- [Rapport de tests](tests/compte_rendu/tests.md) : généré par `bash tests/run-tests.sh`.
 
 ## État du projet
 
