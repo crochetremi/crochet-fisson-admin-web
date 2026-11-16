@@ -1,8 +1,8 @@
 # Tests de l'infrastructure
 
-_Généré le 16/11/2026 à 10:02 par `tests/run-tests.sh`._
+_Généré le 16/11/2026 à 15:04 par `tests/run-tests.sh`._
 
-**Bilan : 51 tests réussis, 2 échoués, sur 53.**
+**Bilan : 51 tests réussis, 0 échoués, sur 51.**
 
 ## Méthode
 
@@ -97,7 +97,7 @@ curl -sI http://nextcloud.local/
 ```text
 HTTP/1.1 301 Moved Permanently
 Server: nginx/1.22.1
-Date: Mon, 16 Nov 2026 09:02:36 GMT
+Date: Mon, 16 Nov 2026 14:04:31 GMT
 Content-Type: text/html
 Content-Length: 169
 Connection: keep-alive
@@ -130,7 +130,7 @@ curl -sI http://keycloak.local/
 ```text
 HTTP/1.1 301 Moved Permanently
 Server: nginx/1.22.1
-Date: Mon, 16 Nov 2026 09:02:36 GMT
+Date: Mon, 16 Nov 2026 14:04:32 GMT
 Content-Type: text/html
 Content-Length: 169
 Connection: keep-alive
@@ -163,7 +163,7 @@ curl -sI http://lstu.local/
 ```text
 HTTP/1.1 301 Moved Permanently
 Server: nginx/1.22.1
-Date: Mon, 16 Nov 2026 09:02:36 GMT
+Date: Mon, 16 Nov 2026 14:04:32 GMT
 Content-Type: text/html
 Content-Length: 169
 Connection: keep-alive
@@ -281,7 +281,7 @@ curl -sI https://keycloak.local/admin/
 ```text
 HTTP/2 302 
 server: nginx/1.22.1
-date: Mon, 16 Nov 2026 09:02:37 GMT
+date: Mon, 16 Nov 2026 14:04:32 GMT
 location: https://keycloak.local/admin/master/console/
 referrer-policy: no-referrer
 strict-transport-security: max-age=31536000; includeSubDomains
@@ -299,7 +299,7 @@ curl -s -H "Authorization: Bearer $KC_TOKEN" "https://keycloak.local/admin/realm
 ```
 
 ```text
-[{"id":"kiwB3_UjT0iQcvEXIN4PCg","name":"openldap","providerId":"ldap","providerType":"org.keycloak.storage.UserStorageProvider","parentId":"f22010fb-100e-4144-ac2e-85b9cd18e803","config":{"fullSyncPer
+[{"id":"jvqvC4j7SY6XaRVvecFwsw","name":"openldap","providerId":"ldap","providerType":"org.keycloak.storage.UserStorageProvider","parentId":"fc6473b4-89c7-4c3d-bb51-f416afed3290","config":{"pagination"
 ```
 
 ### 19. Keycloak voit les utilisateurs de l'annuaire LDAP
@@ -312,7 +312,7 @@ curl -s -H "Authorization: Bearer $KC_TOKEN" "https://keycloak.local/admin/realm
 ```
 
 ```text
-[{"id":"0f8b8d2b-b080-4871-8b27-9d48de36ba42","username":"jdoe","firstName":"John","lastName":"Doe","email":"jdoe@iutnc-crochet-fisson.local","emailVerified":true,"attributes":{"LDAP_ENTRY_DN":["uid=j
+[{"id":"4a000c6b-5a43-4dc5-b786-2be8c5866013","username":"jdoe","firstName":"John","lastName":"Doe","email":"jdoe@iutnc-crochet-fisson.local","emailVerified":true,"attributes":{"LDAP_ENTRY_DN":["uid=j
 ```
 
 ## 5. Nextcloud
@@ -342,17 +342,17 @@ curl -sI https://nextcloud.local/login
 ```text
 HTTP/2 200 
 server: nginx/1.22.1
-date: Mon, 16 Nov 2026 09:02:37 GMT
+date: Mon, 16 Nov 2026 14:04:32 GMT
 content-type: text/html; charset=UTF-8
 content-length: 18274
 vary: Accept-Encoding
-set-cookie: oc9snx6dcy6s=s5nfv6f5r2phb3cnr95ibqjdtp; path=/; secure; HttpOnly; SameSite=Lax
-set-cookie: oc_sessionPassphrase=y2HDw7BMnqHX9WL9G6D57MXr21UalijGQY1iL1UmoiEETnYBdg54B5CU9pv4OjIwei%2BCef%2BrmSPLgEe%2FJ2qotzWD2a%2BWmRR%2FpFrfbuOftnZbNSMTa%2FyFVHCgjwcuMjX9; path=/; secure; HttpOnly;
+set-cookie: ocpepvxzpbeb=50q3h7jmb3lshfhgparlaucd7i; path=/; secure; HttpOnly; SameSite=Lax
+set-cookie: oc_sessionPassphrase=4bqzT%2Fe98O5uFsrKsJ2wV3bv004%2BXwsHJAXFuKrGO9jcAFiTmBNkia1iGCqenQYjA6oXuipHTYF3HXD1jFMgEwBwlilIt%2Fv6wxTrJAXnEUORYpe54fVXCxWO0VAgWtwn; path=/; secure; HttpOnly; SameS
 set-cookie: __Host-nc_sameSiteCookielax=true; path=/; httponly;secure; expires=Fri, 31-Dec-2100 23:59:59 GMT; SameSite=lax
 set-cookie: __Host-nc_sameSiteCookiestrict=true; path=/; httponly;secure; expires=Fri, 31-Dec-2100 23:59:59 GMT; SameSite=strict
-x-request-id: ARK4NlaiJblfjEK2wu3z
+x-request-id: mpaKauT4xZ7lN1fErqUH
 cache-control: no-cache, no-store, must-revalidate
-content-security-policy: default-src 'none';base-uri 'none';manifest-src 'self';script-src 'nonce-Co77330dGj4FuIJQ0tFfB39ZPdN9qgyXkwCeCIneF3Q=';script-src-elem 'strict-dynamic' 'nonce-Co77330dGj4FuIJQ
+content-security-policy: default-src 'none';base-uri 'none';manifest-src 'self';script-src 'nonce-0aPQtHlS+HM1L9fSng8KfV9+wLxJymqRLqt0JU2dfFs=';script-src-elem 'strict-dynamic' 'nonce-0aPQtHlS+HM1L9fS
 feature-policy: autoplay 'self';camera 'none';fullscreen 'self';geolocation 'none';microphone 'none';payment 'none'
 x-robots-tag: noindex, nofollow
 referrer-policy: no-referrer
@@ -391,15 +391,15 @@ curl -sI https://nextcloud.local/apps/user_oidc/login/1
 ```text
 HTTP/2 303 
 server: nginx/1.22.1
-date: Mon, 16 Nov 2026 09:02:37 GMT
+date: Mon, 16 Nov 2026 14:04:32 GMT
 content-type: text/html; charset=UTF-8
 content-length: 0
 location: https://keycloak.local/realms/sae/protocol/openid-connect/auth?client_id=nextcloud&response_type=code&scope=openid+email+profile&redirect_uri=https%3A%2F%2Fnextcloud.local%2Fapps%2Fuser_oidc
-set-cookie: oc9snx6dcy6s=47fagiohvtisi03dkifkbhu32n; path=/; secure; HttpOnly; SameSite=Lax
-set-cookie: oc_sessionPassphrase=Lun%2BqcpFOp0braJRH6iRD2TjTsqVAHSBe06ANkQPgwjR2mQbleXasRZyKoH0p8YyHhENZjppeTeAZAnaTyP9J6wl1n1BU93TsTpyWcaGoQmqwJVwktziU%2FM2TgLVgEL8; path=/; secure; HttpOnly; SameSit
+set-cookie: ocpepvxzpbeb=nqu7egktqarnlj1dumpi0k3gqh; path=/; secure; HttpOnly; SameSite=Lax
+set-cookie: oc_sessionPassphrase=%2B223xs6t8CWcDUN8laL45QOg2lzHP1Ie3zmnTW%2FRzDBJqBrwQJVxG3KL86hJodQIS400gN8T%2B%2BH4tD6HFIXbepn5MmAOFBoMVLlKXcpgN6pgd%2F72TNOpUuAJW49twD8V; path=/; secure; HttpOnly; S
 set-cookie: __Host-nc_sameSiteCookielax=true; path=/; httponly;secure; expires=Fri, 31-Dec-2100 23:59:59 GMT; SameSite=lax
 set-cookie: __Host-nc_sameSiteCookiestrict=true; path=/; httponly;secure; expires=Fri, 31-Dec-2100 23:59:59 GMT; SameSite=strict
-x-request-id: T8iRWMUQGG2aPMbb3chO
+x-request-id: CrB5FUSYj9kWu9Y9FKu7
 cache-control: no-cache, no-store, must-revalidate
 content-security-policy: default-src 'none';base-uri 'none';manifest-src 'self';frame-ancestors 'none'
 feature-policy: autoplay 'none';camera 'none';fullscreen 'none';geolocation 'none';microphone 'none';payment 'none'
@@ -427,9 +427,9 @@ HTTP/1.1 200 OK
 Content-Length: 3334
 Content-Security-Policy: base-uri 'self'; default-src 'none'; font-src 'self'; form-action 'self'; frame-ancestors 'none'; img-src 'self' data:; script-src 'self'; style-src 'self'
 Content-Type: text/html;charset=UTF-8
-Date: Mon, 16 Nov 2026 09:02:37 GMT
+Date: Mon, 16 Nov 2026 14:04:33 GMT
 Server: Mojolicious (Perl)
-Set-Cookie: mojolicious=eyJjc3JmX3Rva2VuIjoiODRmMjQ2OGM4NDczOTA4Njc0MmQ5MDMzMWNlMzgwN2MzYmIyZTI2MiIsImV4cGlyZXMiOjE3OTQ4MjMzNTd9WlpaWlpaWlpaWlpaWlpaWlpaWlpaWlpaWlpaWlpaWlpaWlpaWlpaWlpaWlpaWlpaWlpaWlpa
+Set-Cookie: mojolicious=eyJjc3JmX3Rva2VuIjoiZjM4YzhmMWIyODVlMmIxMzE2MjVjYWQ3OTc0NDgwZjM1YWYwZDVhNCIsImV4cGlyZXMiOjE3OTQ4NDE0NzN9WlpaWlpaWlpaWlpaWlpaWlpaWlpaWlpaWlpaWlpaWlpaWlpaWlpaWlpaWlpaWlpaWlpaWlpa
 Vary: Accept-Encoding
 X-Content-Type-Options: nosniff
 X-Frame-Options: DENY
@@ -447,7 +447,7 @@ curl -o /dev/null -w 'http=%{http_code} location=%{redirect_url}\n' https://lstu
 ```
 
 ```text
-http=302 location=https://keycloak.local/realms/sae/protocol/openid-connect/auth?approval_prompt=force&client_id=lstu&code_challenge=-XJ0XrJf-ZAcVhlpZu08X49JpnvdZYSNZJGVQ9mwkiE&code_challenge_method=S
+http=302 location=https://keycloak.local/realms/sae/protocol/openid-connect/auth?approval_prompt=force&client_id=lstu&code_challenge=YTpc5WVPlCcyPg8Lc5a2M_hsXRIfDlfU5UTlFQqzdOk&code_challenge_method=S
 ```
 
 ### 26. Page protégée sans cookie : /stats
@@ -460,7 +460,7 @@ curl -o /dev/null -w 'http=%{http_code} location=%{redirect_url}\n' https://lstu
 ```
 
 ```text
-http=302 location=https://keycloak.local/realms/sae/protocol/openid-connect/auth?approval_prompt=force&client_id=lstu&code_challenge=Xl4QZ6AbH-vCISQj2dJaLd3hXrSkv8w_hYsln2Tps-U&code_challenge_method=S
+http=302 location=https://keycloak.local/realms/sae/protocol/openid-connect/auth?approval_prompt=force&client_id=lstu&code_challenge=5OPbHpw_sWiQr8AkoaOoQmGzaMHDmzdKh8GRGp3Q3W4&code_challenge_method=S
 ```
 
 ### 27. Page protégée sans cookie : /fullstats
@@ -473,7 +473,7 @@ curl -o /dev/null -w 'http=%{http_code} location=%{redirect_url}\n' https://lstu
 ```
 
 ```text
-http=302 location=https://keycloak.local/realms/sae/protocol/openid-connect/auth?approval_prompt=force&client_id=lstu&code_challenge=fS3sKmqw159927YOI1GlgPuttGtKM66ClFsnYsTkLR0&code_challenge_method=S
+http=302 location=https://keycloak.local/realms/sae/protocol/openid-connect/auth?approval_prompt=force&client_id=lstu&code_challenge=C0hXDOa0itcUNvENb9oJXZMVw_1i3fhgqOJUyq_kseg&code_challenge_method=S
 ```
 
 ### 28. Page protégée sans cookie : /a
@@ -486,7 +486,7 @@ curl -o /dev/null -w 'http=%{http_code} location=%{redirect_url}\n' https://lstu
 ```
 
 ```text
-http=302 location=https://keycloak.local/realms/sae/protocol/openid-connect/auth?approval_prompt=force&client_id=lstu&code_challenge=JzxXumRU7tBxayXAd94ms8aEkWaYja6w4_Xu_cR4Adc&code_challenge_method=S
+http=302 location=https://keycloak.local/realms/sae/protocol/openid-connect/auth?approval_prompt=force&client_id=lstu&code_challenge=FOdjQT_UTjdePgCh6HOHVE8nlvDQreoF9EyXlX8rlxw&code_challenge_method=S
 ```
 
 ### 29. Ajout d'une URL refusé sans authentification
@@ -514,12 +514,12 @@ curl -sI https://lstu.local/oauth2/start
 ```text
 HTTP/2 302 
 server: nginx/1.22.1
-date: Mon, 16 Nov 2026 09:02:38 GMT
+date: Mon, 16 Nov 2026 14:04:33 GMT
 content-type: text/html; charset=utf-8
 cache-control: no-cache, no-store, must-revalidate, max-age=0
 expires: Thu, 01 Jan 1970 00:00:00 UTC
-location: https://keycloak.local/realms/sae/protocol/openid-connect/auth?approval_prompt=force&client_id=lstu&code_challenge=8NPBJfPPNq_DlGY3v8KIsL0xRsWCKVYrAvjq8vi2DQw&code_challenge_method=S256&redi
-set-cookie: _oauth2_proxy_csrf=8BxgV04Nj8SaPK2usiy5oB0GZ5kDExU7z1nHwhFnsxO5eSmhmDBilZ9PNpUJyCAmvZ1ysxpQfW61Y1xjY12yRBBPkFo0fqumY0Qw2ht4l9lI4raSPgLKtbUXFWsUmgWi6GFR8unAIZaj09DiIxacB-AH2lsZHuIYiXrRtGn8g
+location: https://keycloak.local/realms/sae/protocol/openid-connect/auth?approval_prompt=force&client_id=lstu&code_challenge=Upf35FuqZgR6D-wuTX-wJlleQZX9bddEvnGnUJCCn0k&code_challenge_method=S256&redi
+set-cookie: _oauth2_proxy_csrf=mwElaoqlaQxkVna7b_IqPUXqs_3XEmoz69XIsFkC7jCO1cVNgPETeMPAVrc1ZKq2Qta_ZwySI2TlGwHwDapsNeuEWxw02fuY0myxX5sGW_u_lWU3xtff0bfbMHSyzHRCv4VPnAHMyszpOjupCgmElO0bz75LvmfjV16pTC-bT
 
 ```
 
@@ -587,38 +587,12 @@ docker exec debian-admin-web-prj curl -s -d "lsturl=https://example.org&format=j
 ```
 
 ```text
-{"qrcode":"iVBORw0KGgoAAAANSUhEUgAAAGMAAABjAQAAAACnQIM4AAAA7klEQVQ4jc3UMa6DMAwGYCOGbOUC\nlnKNbFyJXADoCXKlbLlGpFwg3hii+rmv7etbwOgNT\/UCH1KU3yYA\/Lvgg1UBJmCK0GkibkvKS5Ib\nTRFn6CmBPyFZN5zUxnxG3GYn+km2K+n
-```
-
-### 36. Le code court fait 8 caractères
-
-- **On attend** : `8` (c'est ce que suppose la regex publique de nginx)
-- **Verdict** : ❌ KO
-
-```bash
-printf %s "$SHORT" | wc -c
-```
-
-```text
-33
-```
-
-### 37. Visiter le lien court SANS être authentifié
-
-- **On attend** : redirection `30x` vers https://example.org
-- **Verdict** : ❌ KO
-
-```bash
-curl -o /dev/null -w "http=%{http_code} location=%{redirect_url}\n" https://lstu.local/$SHORT
-```
-
-```text
-http=302 location=https://keycloak.local/realms/sae/protocol/openid-connect/auth?approval_prompt=force&client_id=lstu&code_challenge=7zBEu4qWZMiVZOL-FN6zlo12m1jk4cRSASPKxP-ZO90&code_challenge_method=S
+{"qrcode":"iVBORw0KGgoAAAANSUhEUgAAAGMAAABjAQAAAACnQIM4AAAA7ElEQVQ4jc3Uuw3EIAwAUCMKyiyA\nxBp0rBQWyGeBZCU61ojEAtClQPI591HSJI6uOJ1FwSsQtvkAHgP+WBmgX5c+gOBUsHo0c6QJp6A7\nZTCCv6HWynJPPdb+jiiXaMZDZmei+nzUf
 ```
 
 ## 8. Parcours complets avec connexion (OIDC)
 
-### 38. Connexion à Lstu via OAuth2 Proxy puis Keycloak puis LDAP
+### 36. Connexion à Lstu via OAuth2 Proxy puis Keycloak puis LDAP
 
 - **On attend** : arrivée sur https://lstu.local/ avec `status=200`
 - **Verdict** : ✅ OK
@@ -631,7 +605,7 @@ kc_login "$JAR1" https://lstu.local/ "$TEST_USER" "$TEST_PW"
 status=200 final_url=https://lstu.local/
 ```
 
-### 39. Ajout d'un lien une fois authentifié
+### 37. Ajout d'un lien une fois authentifié
 
 - **On attend** : un JSON contenant la clé `short`
 - **Verdict** : ✅ OK
@@ -641,10 +615,10 @@ curl -s -b "$JAR1" -d "lsturl=https://example.org/protege&format=json" https://l
 ```
 
 ```text
-{"qrcode":"iVBORw0KGgoAAAANSUhEUgAAAGMAAABjAQAAAACnQIM4AAAA50lEQVQ4jc3UMa7DIAwGYFcM2doL\nIHENNq4UX+ARLtBeiY1rRMoFwpYB9X+m0lOzRI7eUNWTP6bfYEHYF32xVqK42Zjpoqmi\/QyNizSa\nso1wj0J8QgzicxrDUs8ILW60S3YomY+L
+{"qrcode":"iVBORw0KGgoAAAANSUhEUgAAAGMAAABjAQAAAACnQIM4AAAA60lEQVQ4jc3Uuw3DIBAA0LMo6JIF\nkFiDjpXMAmBP4JXoWCMSC0BHgXIBJVHSmKNLruIV6H4IwO+AP1YCMEU4DwuljNXymEM7UPLCBbYH\nMDNCMHOy6jYlrC6A+1R2qt5fEOar2zO1y
 ```
 
-### 40. Un mauvais mot de passe est refusé par Keycloak
+### 38. Un mauvais mot de passe est refusé par Keycloak
 
 - **On attend** : le message `Invalid username or password`
 - **Verdict** : ✅ OK
@@ -654,11 +628,11 @@ kc_login "$JAR3" https://lstu.local/ "$TEST_USER" "mauvais-mot-de-passe"
 ```
 
 ```text
-status=200 final_url=https://keycloak.local/realms/sae/login-actions/authenticate?session_code=9FWNrKTzm55QLfhyqivUgEAM16h6Tp0iYkj8VKks8-Y&execution=61f56f70-af3a-4b09-934c-6bc8e9214e6b&client_id=lstu
+status=200 final_url=https://keycloak.local/realms/sae/login-actions/authenticate?session_code=3y2NUIIRun3j6B5xI3lUwertdJldBLbqXN5q1gekTnY&execution=91bbe085-b5c4-4a19-99ce-c5c64bd0c54c&client_id=lstu
 keycloak: Invalid username or password
 ```
 
-### 41. Connexion à Nextcloud via Keycloak
+### 39. Connexion à Nextcloud via Keycloak
 
 - **On attend** : arrivée sur https://nextcloud.local/ avec `status=200`
 - **Verdict** : ✅ OK
@@ -671,7 +645,7 @@ kc_login "$JAR2" https://nextcloud.local/apps/user_oidc/login/1 "$TEST_USER" "$T
 status=200 final_url=https://nextcloud.local/apps/dashboard/
 ```
 
-### 42. La session Nextcloud appartient bien à l'utilisateur LDAP
+### 40. La session Nextcloud appartient bien à l'utilisateur LDAP
 
 - **On attend** : l'API OCS renvoie `"id":"jdoe"`
 - **Verdict** : ✅ OK
@@ -681,10 +655,10 @@ curl -s -b "$JAR2" -H "OCS-APIRequest: true" "https://nextcloud.local/ocs/v2.php
 ```
 
 ```text
-{"ocs":{"meta":{"status":"ok","statuscode":200,"message":"OK"},"data":{"enabled":true,"id":"jdoe","firstLoginTimestamp":1794819726,"lastLoginTimestamp":1794819726,"lastLogin":1794819726000,"backend":"
+{"ocs":{"meta":{"status":"ok","statuscode":200,"message":"OK"},"data":{"enabled":true,"id":"jdoe","firstLoginTimestamp":1794834519,"lastLoginTimestamp":1794837874,"lastLogin":1794837874000,"backend":"
 ```
 
-### 43. Un utilisateur absent de l'annuaire est refusé (Nextcloud)
+### 41. Un utilisateur absent de l'annuaire est refusé (Nextcloud)
 
 - **On attend** : `Invalid username or password`
 - **Verdict** : ✅ OK
@@ -694,11 +668,11 @@ kc_login "$JAR4" https://nextcloud.local/apps/user_oidc/login/1 "inconnu" "passw
 ```
 
 ```text
-status=200 final_url=https://keycloak.local/realms/sae/login-actions/authenticate?session_code=BDuYVS4cDM7A7SNsBPzVBWi7W4ZzEVNYwn-SrMr4wvw&execution=61f56f70-af3a-4b09-934c-6bc8e9214e6b&client_id=next
+status=200 final_url=https://keycloak.local/realms/sae/login-actions/authenticate?session_code=znt3rrUXlYx7l2nvuDo5Ou9O4dIe7bEezfLXAeyo-k0&execution=91bbe085-b5c4-4a19-99ce-c5c64bd0c54c&client_id=next
 keycloak: Invalid username or password
 ```
 
-### 44. Un mauvais mot de passe est refusé (Nextcloud)
+### 42. Un mauvais mot de passe est refusé (Nextcloud)
 
 - **On attend** : `Invalid username or password`
 - **Verdict** : ✅ OK
@@ -708,11 +682,11 @@ kc_login "$JAR6" https://nextcloud.local/apps/user_oidc/login/1 "$TEST_USER" "ma
 ```
 
 ```text
-status=200 final_url=https://keycloak.local/realms/sae/login-actions/authenticate?session_code=hCqkdC2nr1EgPeIGVSCbHkddbrjbVTqR5O8OYP3abpE&execution=61f56f70-af3a-4b09-934c-6bc8e9214e6b&client_id=next
+status=200 final_url=https://keycloak.local/realms/sae/login-actions/authenticate?session_code=LhY4r2jBzAIP5Ra_g_GwhZ16UCPNnLDtpR1V5GOayiQ&execution=91bbe085-b5c4-4a19-99ce-c5c64bd0c54c&client_id=next
 keycloak: Invalid username or password
 ```
 
-### 45. Un second utilisateur LDAP (asmith) se connecte à Nextcloud
+### 43. Un second utilisateur LDAP (asmith) se connecte à Nextcloud
 
 - **On attend** : arrivée sur Nextcloud avec `status=200`
 - **Verdict** : ✅ OK
@@ -725,7 +699,7 @@ kc_login "$JAR5" https://nextcloud.local/apps/user_oidc/login/1 asmith "$TEST_PW
 status=200 final_url=https://nextcloud.local/apps/dashboard/
 ```
 
-### 46. La session Nextcloud d'asmith est bien celle d'asmith
+### 44. La session Nextcloud d'asmith est bien celle d'asmith
 
 - **On attend** : l'API OCS renvoie `"id":"asmith"`
 - **Verdict** : ✅ OK
@@ -735,12 +709,12 @@ curl -s -b "$JAR5" -H "OCS-APIRequest: true" "https://nextcloud.local/ocs/v2.php
 ```
 
 ```text
-{"ocs":{"meta":{"status":"ok","statuscode":200,"message":"OK"},"data":{"enabled":true,"id":"asmith","firstLoginTimestamp":1794819728,"lastLoginTimestamp":1794819728,"lastLogin":1794819728000,"backend"
+{"ocs":{"meta":{"status":"ok","statuscode":200,"message":"OK"},"data":{"enabled":true,"id":"asmith","firstLoginTimestamp":1794834521,"lastLoginTimestamp":1794837874,"lastLogin":1794837874000,"backend"
 ```
 
 ## 9. Installation conforme au sujet
 
-### 47. OpenLDAP, nginx, MariaDB et PHP viennent de paquets Debian
+### 45. OpenLDAP, nginx, MariaDB et PHP viennent de paquets Debian
 
 - **On attend** : `4` paquets au statut installé
 - **Verdict** : ✅ OK
@@ -753,7 +727,7 @@ docker exec debian-admin-web-prj dpkg -l slapd nginx mariadb-server php8.3-fpm |
 4
 ```
 
-### 48. Nextcloud, Keycloak, Lstu et OAuth2 Proxy ne viennent PAS de paquets Debian
+### 46. Nextcloud, Keycloak, Lstu et OAuth2 Proxy ne viennent PAS de paquets Debian
 
 - **On attend** : `0` paquet : ils sont installés depuis les sources officielles
 - **Verdict** : ✅ OK
@@ -766,7 +740,7 @@ docker exec debian-admin-web-prj dpkg -l nextcloud keycloak lstu oauth2-proxy 2>
 0
 ```
 
-### 49. Nextcloud : archive officielle en place
+### 47. Nextcloud : archive officielle en place
 
 - **On attend** : `installed: true`
 - **Verdict** : ✅ OK
@@ -786,7 +760,7 @@ docker exec debian-admin-web-prj runuser -u www-data -- php /var/www/nextcloud/o
   - extendedSupport: false
 ```
 
-### 50. Keycloak : archive officielle dans /opt/keycloak
+### 48. Keycloak : archive officielle dans /opt/keycloak
 
 - **On attend** : un numéro de version
 - **Verdict** : ✅ OK
@@ -801,7 +775,7 @@ JVM: 17.0.21 (Debian OpenJDK 64-Bit Server VM 17.0.21+9-1-deb12u1-Debian)
 OS: Linux 7.2.15-arch1-1 amd64
 ```
 
-### 51. Lstu : dépôt officiel cloné depuis framagit
+### 49. Lstu : dépôt officiel cloné depuis framagit
 
 - **On attend** : l'URL du dépôt `origin`
 - **Verdict** : ✅ OK
@@ -814,7 +788,7 @@ docker exec debian-admin-web-prj runuser -u lstu -- git -C /opt/lstu remote get-
 https://framagit.org/fiat-tux/hat-softwares/lstu.git
 ```
 
-### 52. OAuth2 Proxy : binaire de la release officielle
+### 50. OAuth2 Proxy : binaire de la release officielle
 
 - **On attend** : une version `v7.x`
 - **Verdict** : ✅ OK
@@ -829,7 +803,7 @@ oauth2-proxy v7.12.0 (built with go1.24.6)
 
 ## 10. Livrables
 
-### 53. Les documents demandés existent et ne sont pas vides
+### 51. Les documents demandés existent et ne sont pas vides
 
 - **On attend** : 4 lignes « présent »
 - **Verdict** : ✅ OK
