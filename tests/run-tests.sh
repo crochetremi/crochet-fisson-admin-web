@@ -333,7 +333,7 @@ section "9. Installation conforme au sujet"
 
 t "OpenLDAP, nginx, MariaDB et PHP viennent de paquets Debian" \
   "\`4\` paquets au statut installé" \
-  "$D dpkg -l slapd nginx mariadb-server php8.2-fpm | grep -c ^ii" \
+  "$D dpkg -l slapd nginx mariadb-server php8.3-fpm | grep -c ^ii" \
   '^4$'
 
 t "Nextcloud, Keycloak, Lstu et OAuth2 Proxy ne viennent PAS de paquets Debian" \
